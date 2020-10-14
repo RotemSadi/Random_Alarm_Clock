@@ -6,7 +6,7 @@ import androidx.room.*
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import com.example.randomalarmclock.alarmsDatabase.UsedAlarmAnimal
 
-class RoomDAO {
+class AlarmsDao {
     @Dao
     interface AlarmsInfoDao{
         @Query("select * from alarm_table")

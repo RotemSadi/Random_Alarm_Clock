@@ -21,9 +21,9 @@ import com.example.randomalarmclock.alarmsDatabase.UsedAlarmAnimal
 
  abstract class AnimalAlarmRoomDB: RoomDatabase(){
 
-    abstract fun roomDao(): RoomDAO
-    abstract fun alarmsDao(): RoomDAO.AlarmsInfoDao
-    abstract fun animalsListDao(): RoomDAO.AnimalInfoDao
+    abstract fun roomDao(): AlarmsDao
+    abstract fun alarmsDao(): AlarmsDao.AlarmsInfoDao
+    abstract fun animalsListDao(): AlarmsDao.AnimalInfoDao
 
 
     companion object {
