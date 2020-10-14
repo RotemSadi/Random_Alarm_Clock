@@ -1,17 +1,16 @@
-package com.example.animalalarmclock.roomDatabase
+package com.example.randomalarmclock.animalsDatabase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
-import com.example.randomalarmclock.alarmsDatabase.AnimalInfo
+
 import com.example.randomalarmclock.alarmsDatabase.PendingIntentsList
-import com.example.randomalarmclock.alarmsDatabase.UsedAlarmAnimal
+
 
 @Database(
-    entities = [AlarmsInfo::class,
+    entities = [
         AnimalInfo::class,
         UsedAlarmAnimal::class,
         PendingIntentsList::class],
@@ -19,20 +18,20 @@ import com.example.randomalarmclock.alarmsDatabase.UsedAlarmAnimal
     exportSchema = false
 )
 
- abstract class AnimalAlarmRoomDB: RoomDatabase(){
+abstract class AnimalDB: RoomDatabase(){
 
-    abstract fun roomDao(): AlarmsDao
-    abstract fun alarmsDao(): AlarmsDao.AlarmsInfoDao
-    abstract fun animalsListDao(): AlarmsDao.AnimalInfoDao
+    abstract fun animalDao(): AnimalInfoDao
+    abstract fun animalUsedDao(): UsedAlarmAnimalDao
+
 
 
     companion object {
 
         @Volatile
-        private var INSTANCE: AnimalAlarmRoomDB? = null
+        private var INSTANCE: AnimalDB? = null
 
 
-        fun getDatabase(context: Context): AnimalAlarmRoomDB {
+        fun getDatabase(context: Context): AnimalDB {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -40,7 +39,7 @@ import com.example.randomalarmclock.alarmsDatabase.UsedAlarmAnimal
             synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AnimalAlarmRoomDB::class.java,
+                    AnimalDB::class.java,
                     "alarms_database"
                 ).build()
                 INSTANCE = instance

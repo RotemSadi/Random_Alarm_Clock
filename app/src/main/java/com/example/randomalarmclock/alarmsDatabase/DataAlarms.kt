@@ -19,15 +19,6 @@ data class AlarmsInfo(@PrimaryKey(autoGenerate = true)@ColumnInfo(name = "id")va
                       @ColumnInfo(name = "friday")var friday: Boolean = false,
                       @ColumnInfo(name = "saturday")var saturday: Boolean = false)
 
-@Entity(tableName = "animal")
-data class AnimalInfo(@PrimaryKey @ColumnInfo(name = "animal_id")var animalId: Int,
-                      @ColumnInfo(name = "image")var image: Int,
-                      @ColumnInfo(name = "name")var name: String,
-                      @ColumnInfo(name = "sound")var sound: Int)
-
-@Entity(tableName = "alarm_animal")
-data class UsedAlarmAnimal(@PrimaryKey @ColumnInfo(name = "id")var alarmId: Int,
-                           @ColumnInfo(name = "animal_id") var animalId:Int)
 
 @Entity(tableName = "pi_list")
 data class PendingIntentsList(@PrimaryKey @ColumnInfo(name = "pending_intent")val intentId: Int)
