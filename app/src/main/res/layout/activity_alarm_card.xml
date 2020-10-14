@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.randomalarmclock.AlarmCard">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/alarm_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="8dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/on_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:lineSpacingExtra="8sp"
+                android:padding="5dp"
+                android:text="ON"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:typeface="normal"
+                app:layout_constraintBottom_toBottomOf="@id/alarm_time"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/alarm_time" />
+
+            <TextView
+                android:id="@+id/on_daily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:lineSpacingExtra="8sp"
+                android:padding="5dp"
+                android:text="Daily"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                android:typeface="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/sat_btn"
+                app:layout_constraintTop_toTopOf="@id/sat_btn" />
+
+            <TextView
+                android:id="@+id/alarm_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:text="@string/time"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/fri_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/bin_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/on_off"
+                app:layout_constraintTop_toTopOf="@id/sun_btn"
+                app:srcCompat="@drawable/ic_action_bin" />
+
+            <TextView
+                android:id="@+id/sun_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="5dp"
+                android:text="@string/sunday_saturday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/alarm_time"
+                app:layout_constraintTop_toBottomOf="@+id/alarm_time" />
+
+            <TextView
+                android:id="@+id/mon_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/monday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/sun_btn"
+                app:layout_constraintTop_toTopOf="@+id/sun_btn" />
+
+            <TextView
+                android:id="@+id/tue_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/tuesday_thursday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/mon_btn"
+                app:layout_constraintTop_toTopOf="@+id/mon_btn" />
+
+            <TextView
+                android:id="@+id/wen_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/wednesday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/tue_btn"
+                app:layout_constraintTop_toTopOf="@+id/tue_btn" />
+
+            <TextView
+                android:id="@+id/thu_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/tuesday_thursday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/wen_btn" />
+
+            <TextView
+                android:id="@+id/fri_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/friday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/thu_btn"
+                app:layout_constraintTop_toTopOf="@+id/thu_btn" />
+
+            <TextView
+                android:id="@+id/sat_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="5dp"
+                android:text="@string/sunday_saturday"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fri_btn"
+                app:layout_constraintTop_toTopOf="@+id/fri_btn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Rendom Alarm Clock</string>
+    <string name="my_alarms">My Alarms</string>
+    <string name="new_alarm">New Alarm</string>
+    <string name="time">Time</string>
+    <string name="delete">Delete</string>
+    <string name="delete_last">Delete Last</string>
+    <string name="on_text">ON</string>
+    <string name="off_text">OFF</string>
+    <string name="sunday_saturday">S</string>
+    <string name="monday">M</string>
+    <string name="tuesday_thursday">T</string>
+    <string name="wednesday">W</string>
+    <string name="friday">F</string>
 </resources>

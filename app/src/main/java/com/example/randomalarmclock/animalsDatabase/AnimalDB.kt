@@ -20,8 +20,8 @@ import com.example.randomalarmclock.alarmsDatabase.PendingIntentsList
 
 abstract class AnimalDB: RoomDatabase(){
 
-    abstract fun animalDao(): AnimalInfoDao
-    abstract fun animalUsedDao(): UsedAlarmAnimalDao
+    abstract fun animalDao(): AnimalsDao.AnimalInfoDao
+    abstract fun animalUsedDao(): AnimalsDao.UsedAlarmAnimalDao
 
 
 
