@@ -1,4 +1,4 @@
-package com.example.animalalarmclock.roomDatabase
+package com.example.randomalarmclock
 
 import android.content.Context
 import androidx.room.Database
@@ -19,7 +19,7 @@ import com.example.randomalarmclock.alarmsDatabase.PendingIntentsList
 
  abstract class AlarmDB: RoomDatabase(){
 
-    abstract fun alarmsDao(): AlarmsDao.AlarmsInfoDao
+    abstract fun alarmsDao(): DaoAlarms.AlarmsInfoDao
 
 
     companion object {

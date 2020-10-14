@@ -1,11 +1,11 @@
-package com.example.animalalarmclock.roomDatabase
+package com.example.randomalarmclock
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 
-class AlarmsDao {
+class DaoAlarms {
     @Dao
     interface AlarmsInfoDao{
         @Query("select * from alarm_table")
