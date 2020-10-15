@@ -17,7 +17,25 @@ data class AlarmsInfo(@PrimaryKey(autoGenerate = true)@ColumnInfo(name = "id")va
                       @ColumnInfo(name = "wednesday")var wednesday: Boolean = false,
                       @ColumnInfo(name = "thursday")var thursday: Boolean = false,
                       @ColumnInfo(name = "friday")var friday: Boolean = false,
-                      @ColumnInfo(name = "saturday")var saturday: Boolean = false)
+                      @ColumnInfo(name = "saturday")var saturday: Boolean = false){
+    fun getId():Int{
+        return alarmID
+    }
+
+    fun setId(id: Int){
+        this.alarmID = id
+    }
+
+    fun getHour():Int{
+        return alarmHour
+    }
+
+    fun setHour(hour:Int){
+        this.alarmHour = hour
+    }
+
+
+}
 
 
 @Entity(tableName = "pi_list")

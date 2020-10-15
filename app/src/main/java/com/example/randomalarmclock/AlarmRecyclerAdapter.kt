@@ -5,150 +5,131 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.randomalarmclock.alarmsDatabase.AlarmsArrayList.alarms
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.android.synthetic.main.activity_alarm_card.view.*
 
-class AlarmRecyclerAdapter(context: Context?, alarmList: ArrayList<AlarmsInfo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>,
+                                 private val onDeleteAlarm: (alarmsIfo: AlarmsInfo) -> Unit,
+                                 private val onUpdateAlarm: (alarmsIfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
 
-    inner class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val alarmTime: TextView = itemView.findViewById(R.id.alarm_time)
-        val daily: TextView = itemView.findViewById(R.id.on_daily)
-        val onOff: TextView = itemView.findViewById(R.id.on_off)
-        lateinit var day: TextView
-        val sunday: TextView = itemView.findViewById(R.id.sun_btn)
-        val monday: TextView = itemView.findViewById(R.id.mon_btn)
-        val tuesday: TextView = itemView.findViewById(R.id.tue_btn)
-        val wednesday: TextView = itemView.findViewById(R.id.wen_btn)
-        val thursday: TextView = itemView.findViewById(R.id.thu_btn)
-        val friday: TextView = itemView.findViewById(R.id.fri_btn)
-        val saturday: TextView = itemView.findViewById(R.id.sat_btn)
-        private val bin: ImageView = itemView.findViewById(R.id.bin_me)
-        var alarmPosition = 0
+    inner class ViewHolder (val view:View) : RecyclerView.ViewHolder(view)
 
-        init {
-            bin.setOnClickListener {
-                if (alarmPosition != POSITION_NOT_SET) {
-                    GlobalScope.launch {
-                      AlarmDB.getDatabase(context = null).alarmsDao().deleteAlarm(alarmPosition)
-                        withContext(Dispatchers.Main) {
-                            notifyItemRemoved(alarmPosition)
-                        }
-                    }
-                }
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): AlarmRecyclerAdapter.ViewHolder {
+        return ViewHolder(LayoutInflater.from(context)
+            .inflate(R.layout.activity_alarm_card, parent,
+                false))
+    }
+
+    override fun onBindViewHolder(holder: AlarmRecyclerAdapter.ViewHolder, position: Int) {
+        val alarm = alarms[position]
+        holder.view.run {
+            alarm_time.text = alarmTimeFormat(alarm.alarmHour, alarm.alarmMinute)
+            // Change color on off alarm
+            on_daily.setTextColor(alarmStateColor(alarm.daily))
+            on_daily.setOnClickListener {
+                alarm.daily = !alarm.daily
+                on_daily.setTextColor(alarmStateColor(alarm.daily))
+            }
+            on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
+            on_off.setOnClickListener {
+                alarm.onOffAlarm = !alarm.onOffAlarm
+                on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
+                onAlarmDayChanged(alarm, this)
+            }
+            sun_btn.setTextColor(alarmStateColor(alarm.sunday))
+            sun_btn.setOnClickListener {
+                alarm.sunday = !alarm.sunday
+                sun_btn.setTextColor(alarmStateColor(alarm.sunday))
+                onAlarmDayChanged(alarm, this)
+            }
+            mon_btn.setTextColor(alarmStateColor(alarm.monday))
+            mon_btn.setOnClickListener {
+                alarm.monday = !alarm.monday
+                mon_btn.setTextColor(alarmStateColor(alarm.monday))
+                onAlarmDayChanged(alarm, this)
+            }
+            tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
+            tue_btn.setOnClickListener {
+                alarm.tuesday = !alarm.tuesday
+                tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
+                onAlarmDayChanged(alarm, this)
+            }
+            wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
+            wen_btn.setOnClickListener {
+                alarm.wednesday = !alarm.wednesday
+                wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
+                onAlarmDayChanged(alarm, this)
+            }
+            thu_btn.setTextColor(alarmStateColor(alarm.thursday))
+            thu_btn.setOnClickListener {
+                alarm.thursday = !alarm.thursday
+                thu_btn.setTextColor(alarmStateColor(alarm.thursday))
+                onAlarmDayChanged(alarm, this)
+            }
+            fri_btn.setTextColor(alarmStateColor(alarm.friday))
+            fri_btn.setOnClickListener {
+                alarm.friday = !alarm.friday
+                fri_btn.setTextColor(alarmStateColor(alarm.friday))
+                onAlarmDayChanged(alarm, this)
+            }
+            sat_btn.setTextColor(alarmStateColor(alarm.saturday))
+            sat_btn.setOnClickListener {
+                alarm.saturday = !alarm.saturday
+                sat_btn.setTextColor(alarmStateColor(alarm.saturday))
+                onAlarmDayChanged(alarm, this)
+            }
+            bin_me.setOnClickListener {
+                onDeleteAlarm.invoke(alarm)
             }
         }
     }
 
-    private val layoutInflater = LayoutInflater.from(context)
-
-    override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int
-    ): AlarmRecyclerAdapter.ViewHolder {
-        val itemView = layoutInflater.inflate(R.layout.activity_alarm_card, parent, false)
-        return ViewHolder(itemView)
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val alarm = alarms[position]
-        holder.alarmPosition = position
-        holder.alarmTime.text = alarmTimeFormat(alarm.alarmHour, alarm.alarmMinute)
-        // Change color on off alarm
-        holder.daily.setTextColor(alarmStateColor(alarm.daily))
-        holder.daily.setOnClickListener {
-            alarm.daily = !alarm.daily
-            holder.daily.setTextColor(alarmStateColor(alarm.daily))
-        }
-        if (alarm.sunday && alarm.monday && alarm.tuesday && alarm.wednesday && alarm.thursday && alarm.friday && alarm.saturday) {
-            alarm.daily = true
-            holder.daily.setTextColor(alarmStateColor(alarm.daily))
-            alarm.sunday = !alarm.sunday
-            holder.sunday.setTextColor(alarmStateColor(alarm.sunday))
-            alarm.monday = !alarm.monday
-            holder.monday.setTextColor(alarmStateColor(alarm.monday))
-            alarm.tuesday = !alarm.tuesday
-            holder.tuesday.setTextColor(alarmStateColor(alarm.tuesday))
-            alarm.wednesday = !alarm.wednesday
-            holder.wednesday.setTextColor(alarmStateColor(alarm.wednesday))
-            alarm.thursday = !alarm.thursday
-            holder.thursday.setTextColor(alarmStateColor(alarm.thursday))
-            alarm.friday = !alarm.friday
-            holder.friday.setTextColor(alarmStateColor(alarm.friday))
-            alarm.saturday = !alarm.saturday
-            holder.saturday.setTextColor(alarmStateColor(alarm.saturday))
-        }
-        holder.onOff.setTextColor(alarmStateColor(alarm.onOffAlarm))
-        holder.onOff.setOnClickListener {
-            alarm.onOffAlarm = !alarm.onOffAlarm
-            holder.onOff.setTextColor(alarmStateColor(alarm.onOffAlarm))
-        }
-        holder.sunday.setTextColor(alarmStateColor(alarm.sunday))
-        holder.sunday.setOnClickListener {
-            alarm.sunday = !alarm.sunday
-            holder.sunday.setTextColor(alarmStateColor(alarm.sunday))
-        }
-        holder.monday.setTextColor(alarmStateColor(alarm.monday))
-        holder.monday.setOnClickListener {
-            alarm.monday = !alarm.monday
-            holder.monday.setTextColor(alarmStateColor(alarm.monday))
-        }
-        holder.tuesday.setTextColor(alarmStateColor(alarm.tuesday))
-        holder.tuesday.setOnClickListener {
-            alarm.tuesday = !alarm.tuesday
-            holder.tuesday.setTextColor(alarmStateColor(alarm.tuesday))
-        }
-        holder.wednesday.setTextColor(alarmStateColor(alarm.wednesday))
-        holder.wednesday.setOnClickListener {
-            alarm.wednesday = !alarm.wednesday
-            holder.wednesday.setTextColor(alarmStateColor(alarm.wednesday))
-        }
-        holder.thursday.setTextColor(alarmStateColor(alarm.thursday))
-        holder.thursday.setOnClickListener {
-            alarm.thursday = !alarm.thursday
-            holder.thursday.setTextColor(alarmStateColor(alarm.thursday))
-        }
-        holder.friday.setTextColor(alarmStateColor(alarm.friday))
-        holder.friday.setOnClickListener {
-            alarm.friday = !alarm.friday
-            holder.friday.setTextColor(alarmStateColor(alarm.friday))
-        }
-        holder.saturday.setTextColor(alarmStateColor(alarm.saturday))
-        holder.saturday.setOnClickListener {
-            alarm.saturday = !alarm.saturday
-            holder.saturday.setTextColor(alarmStateColor(alarm.saturday))
-        }
-        context = holder.itemView.context
-
-
-    }
-
-    override fun getItemCount()= AlarmDB.getDatabase(context = null).alarmsDao().getAlarmList().size
-
-    private fun alarmTimeFormat(hour: Int, minute: Int): String {
-        return if (hour <= 9 && minute <= 9) {
+    private fun alarmTimeFormat (hour:Int, minute:Int): String {
+        return if (hour <= 9 && minute <= 9){
             "0$hour:0$minute"
-        } else if (hour <= 9 && minute >= 10) {
+        } else if (hour <= 9 && minute >= 10){
             "0$hour:$minute"
-        } else if (hour >= 10 && minute <= 9) {
+        } else if (hour >= 10 && minute <= 9){
             "$hour:0$minute"
-        } else {
+        } else{
             "$hour:$minute"
         }
     }
-
-    private fun alarmStateColor(isOn: Boolean): Int = if (isOn) Color.RED else Color.GRAY
-
+    private fun alarmStateColor(isOn:Boolean): Int = if (isOn) Color.RED else Color.GRAY
     // Function not working yet
-    private fun changeAlarmState(repeatDay: TextView, state: Boolean): Boolean {
+    private fun changeAlarmState(repeatDay: TextView, state: Boolean ):Boolean{
         state != state
         repeatDay.setTextColor(alarmStateColor(state))
         return state
     }
+    private fun onAlarmDayChanged(alarm: AlarmsInfo, view: View) {
+        if (alarm.sunday && alarm.monday && alarm.tuesday && alarm.wednesday && alarm.thursday && alarm.friday && alarm.saturday) {
+            alarm.daily = true
+            view.on_daily.setTextColor(alarmStateColor(alarm.daily))
+            alarm.sunday = !alarm.sunday
+            view.sun_btn.setTextColor(alarmStateColor(alarm.sunday))
+            alarm.monday = !alarm.monday
+            view.mon_btn.setTextColor(alarmStateColor(alarm.monday))
+            alarm.tuesday = !alarm.tuesday
+            view.tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
+            alarm.wednesday = !alarm.wednesday
+            view.wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
+            alarm.thursday = !alarm.thursday
+            view.thu_btn.setTextColor(alarmStateColor(alarm.thursday))
+            alarm.friday = !alarm.friday
+            view.fri_btn.setTextColor(alarmStateColor(alarm.friday))
+            alarm.saturday = !alarm.saturday
+            view.sat_btn.setTextColor(alarmStateColor(alarm.saturday))
+        }
+        onUpdateAlarm(alarm)
+    }
 
+    override fun getItemCount() = alarms.size
 
 }
