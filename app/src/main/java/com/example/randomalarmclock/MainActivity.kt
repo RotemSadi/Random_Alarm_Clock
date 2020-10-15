@@ -1,5 +1,6 @@
 package com.example.randomalarmclock
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
@@ -10,23 +11,15 @@ import android.widget.TimePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.MutableLiveData
-import com.example.randomalarmclock.ListFragment.Companion.newInstance
+import com.example.randomalarmclock.alarmGoOff.AlarmReceiver
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
-import com.example.randomalarmclock.broadcastReceiver.AlarmReceiver
-import com.example.randomalarmclock.broadcastReceiver.AlarmTimeBroadcast
-import kotlinx.android.synthetic.main.activity_list_fragment.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
-class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
+class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private val fragmentList = ListFragment()
-    private var alarmList = MutableLiveData<ArrayList<AlarmsInfo>>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +34,6 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     }
 
-    private fun callListFrag(){
-        val fragmentList = ListFragment.newInstance()
-        fragmentChange(fragmentList)
-    }
-
     private fun fragmentChange(newFragment: Fragment){
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.nav_host_fragment, newFragment)
@@ -53,21 +41,23 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         transaction.addToBackStack(null)
     }
 
+    private fun callListFrag(){
+        val fragmentList = ListFragment.newInstance()
+        fragmentChange(fragmentList)
+    }
 
+    @SuppressLint("SetTextI18n")
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        val cal= applyCal(hourOfDay,minute)
+        val cal= applyCal(hourOfDay, minute)
         val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute)
-        GlobalScope.launch {
-            this@MainActivity?.let {
-
-            }
-            withContext(Dispatchers.Main) {
-                my_list.adapter?.notifyDataSetChanged()
-            }
-        }
-//       DataManager.alarms.add(alarm)
+        fragmentList.addAlarm(alarm)
         setBroadcastIntent(cal.timeInMillis, alarm.alarmID)
         callListFrag()
+    }
+
+    // Function to turn on existing alarm by resetting the milliseconds to future date.
+    fun alarmOnResetTime( alarmInfo: AlarmsInfo){
+        setBroadcastIntent(applyCal(alarmInfo.alarmHour,alarmInfo.alarmMinute).timeInMillis,alarmInfo.alarmID)
     }
 
     private fun setBroadcastIntent(wakeUpTime: Long, id: Int){
@@ -79,7 +69,10 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 //        am.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , 60000 , pi)
     }
 
-    private fun applyCal( myHour:Int, myMinute:Int ): Calendar{
+
+
+    // Function to set chosen time in Calender
+    private fun applyCal( myHour:Int, myMinute:Int ): Calendar {
         return Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, myHour)
             set(Calendar.MINUTE, myMinute)

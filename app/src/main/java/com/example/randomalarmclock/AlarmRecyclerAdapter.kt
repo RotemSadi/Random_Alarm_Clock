@@ -7,24 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.randomalarmclock.alarmsDatabase.AlarmsArrayList.alarms
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_alarm_card.view.*
 
-open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>,
-                                 private val onDeleteAlarm: (alarmsIfo: AlarmsInfo) -> Unit,
-                                 private val onUpdateAlarm: (alarmsIfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
+class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<AlarmsInfo>,
+                            private val onDeleteAlarm: (alarmsInfo: AlarmsInfo) -> Unit,
+                            private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
 
-    inner class ViewHolder (val view:View) : RecyclerView.ViewHolder(view)
+    inner class ViewHolder (val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AlarmRecyclerAdapter.ViewHolder {
-        return ViewHolder(LayoutInflater.from(context)
+        return ViewHolder(
+            LayoutInflater.from(context)
             .inflate(R.layout.activity_alarm_card, parent,
                 false))
     }
+
+    override fun getItemCount() = alarms.size
 
     override fun onBindViewHolder(holder: AlarmRecyclerAdapter.ViewHolder, position: Int) {
         val alarm = alarms[position]
@@ -36,6 +38,7 @@ open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>
                 alarm.daily = !alarm.daily
                 on_daily.setTextColor(alarmStateColor(alarm.daily))
             }
+
             on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
             on_off.setOnClickListener {
                 alarm.onOffAlarm = !alarm.onOffAlarm
@@ -84,6 +87,7 @@ open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>
                 sat_btn.setTextColor(alarmStateColor(alarm.saturday))
                 onAlarmDayChanged(alarm, this)
             }
+
             bin_me.setOnClickListener {
                 onDeleteAlarm.invoke(alarm)
             }
@@ -101,6 +105,7 @@ open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>
             "$hour:$minute"
         }
     }
+
     private fun alarmStateColor(isOn:Boolean): Int = if (isOn) Color.RED else Color.GRAY
     // Function not working yet
     private fun changeAlarmState(repeatDay: TextView, state: Boolean ):Boolean{
@@ -108,6 +113,7 @@ open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>
         repeatDay.setTextColor(alarmStateColor(state))
         return state
     }
+
     private fun onAlarmDayChanged(alarm: AlarmsInfo, view: View) {
         if (alarm.sunday && alarm.monday && alarm.tuesday && alarm.wednesday && alarm.thursday && alarm.friday && alarm.saturday) {
             alarm.daily = true
@@ -129,7 +135,4 @@ open class AlarmRecyclerAdapter (var context: Context?, alarms: List<AlarmsInfo>
         }
         onUpdateAlarm(alarm)
     }
-
-    override fun getItemCount() = alarms.size
-
 }

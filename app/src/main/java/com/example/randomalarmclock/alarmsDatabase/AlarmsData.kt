@@ -3,7 +3,6 @@ package com.example.randomalarmclock.alarmsDatabase
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-//import android.arch.persistence.room.Entity
 
 @Entity(tableName = "alarm_table")
 data class AlarmsInfo(@PrimaryKey(autoGenerate = true)@ColumnInfo(name = "id")var alarmID:Int = 0,
@@ -17,26 +16,4 @@ data class AlarmsInfo(@PrimaryKey(autoGenerate = true)@ColumnInfo(name = "id")va
                       @ColumnInfo(name = "wednesday")var wednesday: Boolean = false,
                       @ColumnInfo(name = "thursday")var thursday: Boolean = false,
                       @ColumnInfo(name = "friday")var friday: Boolean = false,
-                      @ColumnInfo(name = "saturday")var saturday: Boolean = false){
-    fun getId():Int{
-        return alarmID
-    }
-
-    fun setId(id: Int){
-        this.alarmID = id
-    }
-
-    fun getHour():Int{
-        return alarmHour
-    }
-
-    fun setHour(hour:Int){
-        this.alarmHour = hour
-    }
-
-
-}
-
-
-@Entity(tableName = "pi_list")
-data class PendingIntentsList(@PrimaryKey @ColumnInfo(name = "pending_intent")val intentId: Int)
+                      @ColumnInfo(name = "saturday")var saturday: Boolean = false)

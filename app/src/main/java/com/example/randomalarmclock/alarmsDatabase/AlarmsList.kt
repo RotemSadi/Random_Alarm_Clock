@@ -1,5 +1,5 @@
 package com.example.randomalarmclock.alarmsDatabase
 
-object AlarmsArrayList {
+object AlarmsList {
     val alarms = ArrayList<AlarmsInfo>()
 }
