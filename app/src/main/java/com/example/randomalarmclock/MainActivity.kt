@@ -60,7 +60,7 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         setBroadcastIntent(applyCal(alarmInfo.alarmHour,alarmInfo.alarmMinute).timeInMillis,alarmInfo.alarmID)
     }
 
-    private fun setBroadcastIntent(wakeUpTime: Long, id: Int){
+     fun setBroadcastIntent(wakeUpTime: Long, id: Int){
         val alarmReceiverIntent = Intent(this, AlarmReceiver::class.java)
         // pending intent
         val pi = PendingIntent.getBroadcast(this, id, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -72,7 +72,7 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
 
     // Function to set chosen time in Calender
-    private fun applyCal( myHour:Int, myMinute:Int ): Calendar {
+     fun applyCal( myHour:Int, myMinute:Int ): Calendar {
         return Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, myHour)
             set(Calendar.MINUTE, myMinute)

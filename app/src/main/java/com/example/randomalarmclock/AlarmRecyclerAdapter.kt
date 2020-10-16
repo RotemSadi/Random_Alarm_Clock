@@ -13,13 +13,14 @@ import kotlinx.android.synthetic.main.activity_alarm_card.view.*
 class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<AlarmsInfo>,
                             private val onDeleteAlarm: (alarmsInfo: AlarmsInfo) -> Unit,
                             private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
-
+    val mainActivity = MainActivity()
     inner class ViewHolder (val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AlarmRecyclerAdapter.ViewHolder {
+
         return ViewHolder(
             LayoutInflater.from(context)
             .inflate(R.layout.activity_alarm_card, parent,
@@ -43,6 +44,7 @@ class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<Alar
             on_off.setOnClickListener {
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
+                mainActivity.setBroadcastIntent(mainActivity.applyCal(alarm.alarmHour,alarm.alarmMinute).timeInMillis, alarm.alarmID)
                 onAlarmDayChanged(alarm, this)
             }
             sun_btn.setTextColor(alarmStateColor(alarm.sunday))
