@@ -15,6 +15,7 @@ import com.example.randomalarmclock.alarmGoOff.AlarmReceiver
 import com.example.randomalarmclock.alarmGoOff.BroadcastManager
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.DayOfWeek
 import java.util.*
 
 class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
@@ -62,13 +63,17 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         setBroadcastIntent(applyCal(alarmInfo.alarmHour,alarmInfo.alarmMinute).timeInMillis,alarmInfo.alarmID)
     }
 
-     fun setBroadcastIntent(wakeUpTime: Long, id: Int){
+     fun setBroadcastIntent( wakeUpTime: Long, id: Int){
         val alarmReceiverIntent = Intent(this, AlarmReceiver::class.java)
         // pending intent
         val pi = PendingIntent.getBroadcast(this, id, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime , pi)
-//        am.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , 60000 , pi)
+         var alarmTime = wakeUpTime
+         if (wakeUpTime <= System.currentTimeMillis()){
+             alarmTime = 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
+         }
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime , pi)
+//        am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime , 60000 , pi)
     }
 
     // Function to set chosen time in Calender
