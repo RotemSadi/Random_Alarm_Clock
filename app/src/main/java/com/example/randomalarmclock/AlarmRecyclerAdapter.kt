@@ -12,8 +12,10 @@ import kotlinx.android.synthetic.main.activity_alarm_card.view.*
 
 class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<AlarmsInfo>,
                             private val onDeleteAlarm: (alarmsInfo: AlarmsInfo) -> Unit,
-                            private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
-    val mainActivity = MainActivity()
+                            private val setBroadcast: (alarmsInfo: AlarmsInfo) -> Unit,
+                            private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>()
+{
+
     inner class ViewHolder (val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(
@@ -38,13 +40,14 @@ class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<Alar
             on_daily.setOnClickListener {
                 alarm.daily = !alarm.daily
                 on_daily.setTextColor(alarmStateColor(alarm.daily))
+                onAlarmDayChanged(alarm, this)
             }
 
             on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
             on_off.setOnClickListener {
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
-                mainActivity.setBroadcastIntent(mainActivity.applyCal(alarm.alarmHour,alarm.alarmMinute).timeInMillis, alarm.alarmID)
+                setBroadcast(alarm)
                 onAlarmDayChanged(alarm, this)
             }
             sun_btn.setTextColor(alarmStateColor(alarm.sunday))
@@ -117,24 +120,26 @@ class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<Alar
     }
 
     private fun onAlarmDayChanged(alarm: AlarmsInfo, view: View) {
-        if (alarm.sunday && alarm.monday && alarm.tuesday && alarm.wednesday && alarm.thursday && alarm.friday && alarm.saturday) {
+        if (alarm.daily) {
             alarm.daily = true
             view.on_daily.setTextColor(alarmStateColor(alarm.daily))
-            alarm.sunday = !alarm.sunday
+            alarm.sunday = false
             view.sun_btn.setTextColor(alarmStateColor(alarm.sunday))
-            alarm.monday = !alarm.monday
+            alarm.monday = false
             view.mon_btn.setTextColor(alarmStateColor(alarm.monday))
-            alarm.tuesday = !alarm.tuesday
+            alarm.tuesday = false
             view.tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
-            alarm.wednesday = !alarm.wednesday
+            alarm.wednesday = false
             view.wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
-            alarm.thursday = !alarm.thursday
+            alarm.thursday = false
             view.thu_btn.setTextColor(alarmStateColor(alarm.thursday))
-            alarm.friday = !alarm.friday
+            alarm.friday = false
             view.fri_btn.setTextColor(alarmStateColor(alarm.friday))
-            alarm.saturday = !alarm.saturday
+            alarm.saturday =  false
             view.sat_btn.setTextColor(alarmStateColor(alarm.saturday))
         }
         onUpdateAlarm(alarm)
     }
+
+
 }

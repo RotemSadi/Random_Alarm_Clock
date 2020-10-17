@@ -51,7 +51,7 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         val cal= applyCal(hourOfDay, minute)
         val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute)
         fragmentList.addAlarm(alarm)
-        setBroadcastIntent(cal.timeInMillis, alarm.alarmID)
+//        setBroadcastIntent(cal.timeInMillis, alarm.alarmID)
         callListFrag()
     }
 

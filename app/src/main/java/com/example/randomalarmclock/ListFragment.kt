@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.randomalarmclock.alarmGoOff.BroadcastManager
 import com.example.randomalarmclock.alarmsDatabase.AlarmsDao
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_list_fragment.view.*
@@ -15,6 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ListFragment : Fragment() {
+
+    private val manageBroadcast = BroadcastManager()
 
     private val alarmsDao: AlarmsDao?
         get() = AlarmAppDB.getDatabase(context)?.alarmsDao()
@@ -32,7 +35,7 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.my_list.run {
             layoutManager = LinearLayoutManager(context)
-            adapter = AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, updateAlarm)
+            adapter = AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, setBroadcast, updateAlarm)
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
@@ -66,6 +69,25 @@ class ListFragment : Fragment() {
     private val updateAlarm: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) { alarmsDao?.updateAlarm(alarmInfo) }
+        }
+    }
+
+    private val setBroadcast: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
+        lifecycleScope.launch(Dispatchers.Main) {
+                val timeToWake = manageBroadcast.applyCal(alarmInfo.alarmHour,alarmInfo.alarmMinute)
+                    .timeInMillis
+            withContext(Dispatchers.IO) {
+                if (alarmInfo.onOffAlarm == true) {
+                    context?.let {
+                        manageBroadcast.setBroadcastIntent(
+                            it,
+                            timeToWake,
+                            alarmInfo.alarmID
+                        )
+                    }
+                } else { context?.let { manageBroadcast.cancelPI(it, alarmInfo.alarmID) }
+                }
+            }
         }
     }
 }
