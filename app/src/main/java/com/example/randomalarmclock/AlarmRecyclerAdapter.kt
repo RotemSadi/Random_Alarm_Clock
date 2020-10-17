@@ -57,6 +57,7 @@ class AlarmRecyclerAdapter(
                 setBroadcast(alarm)
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
+                broadcastIntent(alarm)
             }
             sun_btn.setTextColor(alarmStateColor(alarm.sunday))
             sun_btn.setOnClickListener {
