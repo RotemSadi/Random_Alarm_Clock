@@ -166,15 +166,24 @@ class AlarmRecyclerAdapter(
         )
         val am: AlarmManager? =
             context?.let { (it.getSystemService(Context.ALARM_SERVICE) as AlarmManager) }
-        if (wakeUpTime <= System.currentTimeMillis()) {
-            val tomorrow = wakeUpTime + 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
-            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, tomorrow, pi)
-        } else {
-            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
-        }
-        onUpdateAlarm(alarm)
-    }
+        if (alarm.onOffAlarm == true) {
+            if (wakeUpTime <= System.currentTimeMillis()) {
+                val tomorrow = wakeUpTime + 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
+                if (alarm.daily && alarm.onOffAlarm){
+                    am?.setRepeating(AlarmManager.RTC_WAKEUP, tomorrow , 60000 , pi)
+                }else{am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, tomorrow, pi)}
 
+            } else {
+                if (alarm.daily && alarm.onOffAlarm){
+                    am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , 60000 , pi)
+                }else{am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)}
+                am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
+            }
+            onUpdateAlarm(alarm)
+        } else{pi.cancel()
+            onUpdateAlarm(alarm)
+        }
+    }
     fun getWakeUpTime(alarm: AlarmsInfo): Long {
         val time =
             Calendar.getInstance().apply {

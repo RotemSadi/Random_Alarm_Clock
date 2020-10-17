@@ -7,7 +7,6 @@ import android.widget.TimePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.example.randomalarmclock.alarmGoOff.BroadcastManager
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -15,7 +14,6 @@ import java.util.*
 class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private val fragmentList = ListFragment()
-    private val manageBroadcast = BroadcastManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
