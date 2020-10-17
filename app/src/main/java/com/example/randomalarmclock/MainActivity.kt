@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.randomalarmclock.alarmGoOff.AlarmReceiver
+import com.example.randomalarmclock.alarmGoOff.BroadcastManager
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -19,6 +20,7 @@ import java.util.*
 class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private val fragmentList = ListFragment()
+    private val manageBroadcast = BroadcastManager()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +51,9 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     @SuppressLint("SetTextI18n")
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         val cal= applyCal(hourOfDay, minute)
-        val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute)
+        val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute, onOffAlarm = true)
         fragmentList.addAlarm(alarm)
-//        setBroadcastIntent(cal.timeInMillis, alarm.alarmID)
+        setBroadcastIntent(cal.timeInMillis, alarm.alarmID)
         callListFrag()
     }
 
@@ -68,8 +70,6 @@ class MainActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime , pi)
 //        am.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , 60000 , pi)
     }
-
-
 
     // Function to set chosen time in Calender
      fun applyCal( myHour:Int, myMinute:Int ): Calendar {

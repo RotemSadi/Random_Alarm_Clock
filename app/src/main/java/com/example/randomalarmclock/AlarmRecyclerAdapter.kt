@@ -45,52 +45,58 @@ class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<Alar
 
             on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
             on_off.setOnClickListener {
+                setBroadcast(alarm)
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
-                setBroadcast(alarm)
-                onAlarmDayChanged(alarm, this)
             }
             sun_btn.setTextColor(alarmStateColor(alarm.sunday))
             sun_btn.setOnClickListener {
                 alarm.sunday = !alarm.sunday
                 sun_btn.setTextColor(alarmStateColor(alarm.sunday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             mon_btn.setTextColor(alarmStateColor(alarm.monday))
             mon_btn.setOnClickListener {
                 alarm.monday = !alarm.monday
                 mon_btn.setTextColor(alarmStateColor(alarm.monday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
             tue_btn.setOnClickListener {
                 alarm.tuesday = !alarm.tuesday
                 tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
             wen_btn.setOnClickListener {
                 alarm.wednesday = !alarm.wednesday
                 wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             thu_btn.setTextColor(alarmStateColor(alarm.thursday))
             thu_btn.setOnClickListener {
                 alarm.thursday = !alarm.thursday
                 thu_btn.setTextColor(alarmStateColor(alarm.thursday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             fri_btn.setTextColor(alarmStateColor(alarm.friday))
             fri_btn.setOnClickListener {
                 alarm.friday = !alarm.friday
                 fri_btn.setTextColor(alarmStateColor(alarm.friday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
             sat_btn.setTextColor(alarmStateColor(alarm.saturday))
             sat_btn.setOnClickListener {
                 alarm.saturday = !alarm.saturday
                 sat_btn.setTextColor(alarmStateColor(alarm.saturday))
                 onAlarmDayChanged(alarm, this)
+                setDailyAlarm(alarm,this)
             }
 
             bin_me.setOnClickListener {
@@ -121,8 +127,28 @@ class AlarmRecyclerAdapter (var context: Context?, private val alarms: List<Alar
 
     private fun onAlarmDayChanged(alarm: AlarmsInfo, view: View) {
         if (alarm.daily) {
-            alarm.daily = true
-            view.on_daily.setTextColor(alarmStateColor(alarm.daily))
+            alarm.sunday = false
+            view.sun_btn.setTextColor(alarmStateColor(alarm.sunday))
+            alarm.monday = false
+            view.mon_btn.setTextColor(alarmStateColor(alarm.monday))
+            alarm.tuesday = false
+            view.tue_btn.setTextColor(alarmStateColor(alarm.tuesday))
+            alarm.wednesday = false
+            view.wen_btn.setTextColor(alarmStateColor(alarm.wednesday))
+            alarm.thursday = false
+            view.thu_btn.setTextColor(alarmStateColor(alarm.thursday))
+            alarm.friday = false
+            view.fri_btn.setTextColor(alarmStateColor(alarm.friday))
+            alarm.saturday =  false
+            view.sat_btn.setTextColor(alarmStateColor(alarm.saturday))
+        }
+        onUpdateAlarm(alarm)
+    }
+    private fun setDailyAlarm(alarm: AlarmsInfo, view: View) {
+        if (alarm.sunday && alarm.monday && alarm.tuesday && alarm.wednesday
+            && alarm.thursday && alarm.friday && alarm.saturday) {
+            alarm.daily =true
+            view.on_daily.setTextColor(alarmStateColor(alarm.sunday))
             alarm.sunday = false
             view.sun_btn.setTextColor(alarmStateColor(alarm.sunday))
             alarm.monday = false

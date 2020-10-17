@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.randomalarmclock.alarmGoOff.BroadcastManager
 import com.example.randomalarmclock.alarmsDatabase.AlarmsDao
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
+import kotlinx.android.synthetic.main.activity_alarm_card.*
 import kotlinx.android.synthetic.main.activity_list_fragment.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ class ListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, setBroadcast, updateAlarm)
         }
+
 
         lifecycleScope.launch(Dispatchers.Main) {
             // Why clear and addAll?
@@ -73,21 +75,13 @@ class ListFragment : Fragment() {
     }
 
     private val setBroadcast: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
-        lifecycleScope.launch(Dispatchers.Main) {
-                val timeToWake = manageBroadcast.applyCal(alarmInfo.alarmHour,alarmInfo.alarmMinute)
-                    .timeInMillis
-            withContext(Dispatchers.IO) {
-                if (alarmInfo.onOffAlarm == true) {
-                    context?.let {
-                        manageBroadcast.setBroadcastIntent(
-                            it,
-                            timeToWake,
-                            alarmInfo.alarmID
-                        )
-                    }
-                } else { context?.let { manageBroadcast.cancelPI(it, alarmInfo.alarmID) }
-                }
+//        on_off.setOnClickListener {
+//            val timeToWake= context.let { manageBroadcast.applyCal(alarmsDao?.getAlarmHour(), alarmsDao?.getAlarmMinute()).timeInMillis }
+//            val id = context.let{alarmsDao?.getAlarmId()}
+//            if (id != null) {
+//                manageBroadcast.setBroadcastIntent(timeToWake,id)
+//            }}
+
             }
-        }
-    }
+
 }
