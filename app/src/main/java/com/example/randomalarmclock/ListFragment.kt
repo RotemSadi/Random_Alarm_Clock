@@ -16,7 +16,6 @@ import kotlinx.coroutines.withContext
 
 class ListFragment : Fragment() {
 
-
     private val alarmsDao: AlarmsDao?
         get() = AlarmAppDB.getDatabase(context)?.alarmsDao()
     private var alarmsList: ArrayList<AlarmsInfo> = ArrayList()
@@ -53,7 +52,10 @@ class ListFragment : Fragment() {
 
     fun addAlarm(alarmsInfo: AlarmsInfo) {
         lifecycleScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) { alarmsDao?.insertAlarm(alarmsInfo) }
+            val id = withContext(Dispatchers.IO) { alarmsDao?.insertAlarm(alarmsInfo) }
+            if (id != null) {
+                alarmsInfo.alarmID = id.toInt()
+            }
             alarmsList.add(alarmsInfo)
             (view?.my_list?.adapter as? AlarmRecyclerAdapter)?.notifyItemInserted(alarmsList.lastIndex)
         }
