@@ -21,6 +21,10 @@
         </activity>
         <receiver android:name=".alarmGoOff.AlarmReceiver">
 
+            <intent-filter>
+                <action android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            </intent-filter>
+
         </receiver>
     </application>
 

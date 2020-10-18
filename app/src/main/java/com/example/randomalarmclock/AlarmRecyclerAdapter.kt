@@ -1,6 +1,7 @@
 package com.example.randomalarmclock
 
 import android.app.AlarmManager
+import android.app.AlarmManager.INTERVAL_DAY
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -18,7 +19,6 @@ import java.util.*
 class AlarmRecyclerAdapter(
     var context: Context?, private val alarms: List<AlarmsInfo>,
     private val onDeleteAlarm: (alarmsInfo: AlarmsInfo) -> Unit,
-    private val setBroadcast: (alarmsInfo: AlarmsInfo) -> Unit,
     private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit
 ) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
 
@@ -54,7 +54,6 @@ class AlarmRecyclerAdapter(
 
             on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
             on_off.setOnClickListener {
-                setBroadcast(alarm)
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
                 broadcastIntent(alarm)
@@ -155,7 +154,10 @@ class AlarmRecyclerAdapter(
     }
 
     fun broadcastIntent(alarm: AlarmsInfo) {
-        val wakeUpTime = getWakeUpTime(alarm)
+        var wakeUpTime = getWakeUpTime(alarm)
+        if (wakeUpTime <= System.currentTimeMillis()){
+            wakeUpTime += 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
+            }
         val id = alarm.alarmID
         val alarmReceiverIntent = Intent(context, AlarmReceiver::class.java)
         val pi = PendingIntent.getBroadcast(
@@ -166,33 +168,29 @@ class AlarmRecyclerAdapter(
         )
         val am: AlarmManager? =
             context?.let { (it.getSystemService(Context.ALARM_SERVICE) as AlarmManager) }
-        if (alarm.onOffAlarm == true) {
-            if (wakeUpTime <= System.currentTimeMillis()) {
-                val tomorrow = wakeUpTime + 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
-                if (alarm.daily && alarm.onOffAlarm){
-                    am?.setRepeating(AlarmManager.RTC_WAKEUP, tomorrow , 60000 , pi)
-                }else{am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, tomorrow, pi)}
-
-            } else {
-                if (alarm.daily && alarm.onOffAlarm){
-                    am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , 60000 , pi)
-                }else{am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)}
-                am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
-            }
+        if(alarm.daily&& alarm.onOffAlarm){
+            am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , INTERVAL_DAY , pi)
+        }
+        if (alarm.onOffAlarm) {
+              repeatAlarm(am, alarm, wakeUpTime, pi)
             onUpdateAlarm(alarm)
-        } else{pi.cancel()
+        }
+        else{am?.cancel(pi)
             onUpdateAlarm(alarm)
         }
     }
-    fun getWakeUpTime(alarm: AlarmsInfo): Long {
-        val time =
-            Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
-                set(Calendar.MINUTE, alarm.alarmMinute)
-                set(Calendar.SECOND, 0)
-            }
-        val timeToWakeUp = time.timeInMillis
-        return timeToWakeUp
+
+    fun repeatAlarm(am: AlarmManager?, alarm: AlarmsInfo, wakeUpTime: Long, pi: PendingIntent){
+        if (alarm.daily ){
+            am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , INTERVAL_DAY , pi)
+        }
+        if (alarm.sunday || alarm.monday || alarm.tuesday || alarm.wednesday || alarm.thursday || alarm.friday || alarm.saturday){
+            am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime , INTERVAL_DAY * 7 , pi)
+        }
+        else{
+            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
+        }
+
     }
 
     fun changeToDaily(alarm: AlarmsInfo, view: View) {
@@ -210,6 +208,76 @@ class AlarmRecyclerAdapter(
         view.fri_btn.setTextColor(alarmStateColor(alarm.friday))
         alarm.saturday = false
         view.sat_btn.setTextColor(alarmStateColor(alarm.saturday))
+    }
+
+    fun getWakeUpTime(alarm: AlarmsInfo): Long {
+        val time =
+            Calendar.getInstance()
+        if(alarm.sunday){
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 1)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.monday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 2)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.tuesday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 3)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.wednesday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 4)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.thursday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 5)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.friday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 6)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        if(alarm.saturday) {
+            time.apply {
+                set(Calendar.DAY_OF_WEEK, 7)
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        else {
+            time.apply {
+                set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
+                set(Calendar.MINUTE, alarm.alarmMinute)
+                set(Calendar.SECOND, 0)
+            }
+        }
+        val timeToWakeUp = time.timeInMillis
+        return timeToWakeUp
     }
 }
 

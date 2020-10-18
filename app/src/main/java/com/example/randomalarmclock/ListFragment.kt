@@ -38,13 +38,11 @@ class ListFragment : Fragment() {
         view.my_list.run {
             layoutManager = LinearLayoutManager(context)
             adapter =
-                AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, setBroadcast, updateAlarm)
+                AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, updateAlarm)
         }
 
 
         lifecycleScope.launch(Dispatchers.Main) {
-            // Why clear and addAll?
-            // we should keep the same instance without crete a new one. the dao return a new list every time so we should clear the exsisting one and add query's retults
             alarmsList.clear()
             withContext(Dispatchers.IO) { alarmsDao?.getAlarmList() }?.run {
                 alarmsList.addAll(this)
@@ -75,15 +73,4 @@ class ListFragment : Fragment() {
             withContext(Dispatchers.IO) { alarmsDao?.updateAlarm(alarmInfo) }
         }
     }
-
-    private val setBroadcast: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
-//        on_off.setOnClickListener {
-//            val timeToWake= context.let { manageBroadcast.applyCal(alarmsDao?.getAlarmHour(), alarmsDao?.getAlarmMinute()).timeInMillis }
-//            val id = context.let{alarmsDao?.getAlarmId()}
-//            if (id != null) {
-//                manageBroadcast.setBroadcastIntent(timeToWake,id)
-//            }}
-
-    }
-
 }
