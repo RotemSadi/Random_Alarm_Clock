@@ -188,10 +188,8 @@ class AlarmRecyclerAdapter(
 
     private fun repeatAlarm(am: AlarmManager?, alarm: AlarmsInfo, wakeUpTime: Long, pi: PendingIntent) {
         if (alarm.daily) {
-            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
             am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, INTERVAL_DAY, pi)
         } else if (alarm.sunday || alarm.monday || alarm.tuesday || alarm.wednesday || alarm.thursday || alarm.friday || alarm.saturday) {
-            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
             am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, INTERVAL_DAY * 7, pi)
         } else {
             am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
