@@ -14,11 +14,9 @@ import com.example.randomalarmclock.animalsDatabase.AnimalList
 import kotlinx.android.synthetic.main.activity_alarm_on_view.*
 import java.util.*
 
-class AlarmOnView: AppCompatActivity() {
-    //snoozeClickCounter keeps resetting.
-    private var snoozeClickCounter:Int = 0
-    //    private var animalSound = R.raw.elephant9
-    private var randomAnimal:Int = 0
+class AlarmOnView : AppCompatActivity() {
+
+    private var randomAnimal: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,50 +36,32 @@ class AlarmOnView: AppCompatActivity() {
         }
 
         snooze_btn.setOnClickListener {
-            if(snoozeClickCounter <= 1) {
-                snoozeClickCounter += 1
-                snoozeText()
-                snooze(alarmSound)
-            } else {
-                Toast.makeText(
-                applicationContext,
-                "No more snoozing.",
-                Toast.LENGTH_LONG
-            ).show()}
+            snoozeText()
+            snooze(alarmSound)
         }
     }
-
 
     private fun mediaPlayerStart(mp: MediaPlayer) {
         mp.start()
         mp.isLooping = true
     }
 
-    private fun mediaPlayerStop(mp: MediaPlayer){
+    private fun mediaPlayerStop(mp: MediaPlayer) {
         mp.stop()
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
     }
 
-    private fun snoozeText(){
-        val timeSnoozed: Int
-        if (snoozeClickCounter >= 2){
-            timeSnoozed = snoozeClickCounter*5
-            Toast.makeText(
-                applicationContext,
-                "You snoozed for $timeSnoozed minutes, 5 more minutes",
-                Toast.LENGTH_LONG
-            ).show()
-        }else {
-            Toast.makeText(
+    private fun snoozeText() {
+        Toast.makeText(
             applicationContext,
             "You have 5 more minutes to sleep",
             Toast.LENGTH_LONG
-        ).show()}
+        ).show()
     }
 
-    private fun snooze(mp: MediaPlayer){
-        val delayTimeMilli = System.currentTimeMillis()+300000//current time + 5 minutes 300000
+    private fun snooze(mp: MediaPlayer) {
+        val delayTimeMilli = System.currentTimeMillis() + 300000//current time + 5 minutes 300000
         val alarmReceiverIntent = Intent(this, AlarmReceiver::class.java)
         // pending intent
         val pi = PendingIntent.getBroadcast(this, 111, alarmReceiverIntent, 0)
@@ -89,6 +69,5 @@ class AlarmOnView: AppCompatActivity() {
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, delayTimeMilli, pi)
         mediaPlayerStop(mp)
     }
-
 }
 

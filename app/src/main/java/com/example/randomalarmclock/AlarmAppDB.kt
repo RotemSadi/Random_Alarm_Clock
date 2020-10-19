@@ -11,7 +11,7 @@ import com.example.randomalarmclock.animalsDatabase.AnimalInfo
 
 
 @Database(entities = [AlarmsInfo::class, AnimalInfo::class], version = 1)
-abstract class AlarmAppDB: RoomDatabase() {
+abstract class AlarmAppDB : RoomDatabase() {
 
     abstract fun alarmsDao(): AlarmsDao
     abstract fun animalsListDao(): AnimalDao
@@ -24,8 +24,12 @@ abstract class AlarmAppDB: RoomDatabase() {
         fun getDatabase(context: Context?): AlarmAppDB? {
             if (INSTANCE == null) {
                 synchronized(AlarmAppDB::class) {
-                    context?.run  {
-                        INSTANCE =  Room.databaseBuilder(applicationContext, AlarmAppDB::class.java, "alarms_database").build()
+                    context?.run {
+                        INSTANCE = Room.databaseBuilder(
+                            applicationContext,
+                            AlarmAppDB::class.java,
+                            "alarms_database"
+                        ).build()
                     }
                 }
             }

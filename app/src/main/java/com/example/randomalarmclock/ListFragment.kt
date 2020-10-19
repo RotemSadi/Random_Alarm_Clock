@@ -24,7 +24,11 @@ class ListFragment : Fragment() {
         fun newInstance() = ListFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.activity_list_fragment, container, false)
     }
 
@@ -32,12 +36,12 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.my_list.run {
             layoutManager = LinearLayoutManager(context)
-            adapter = AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, updateAlarm)
+            adapter =
+                AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, updateAlarm)
         }
 
+
         lifecycleScope.launch(Dispatchers.Main) {
-            // Why clear and addAll?
-            // we should keep the same instance without crete a new one. the dao return a new list every time so we should clear the exsisting one and add query's retults
             alarmsList.clear()
             withContext(Dispatchers.IO) { alarmsDao?.getAlarmList() }?.run {
                 alarmsList.addAll(this)
@@ -48,7 +52,10 @@ class ListFragment : Fragment() {
 
     fun addAlarm(alarmsInfo: AlarmsInfo) {
         lifecycleScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) { alarmsDao?.insertAlarm(alarmsInfo) }
+            val id = withContext(Dispatchers.IO) { alarmsDao?.insertAlarm(alarmsInfo) }
+            if (id != null) {
+                alarmsInfo.alarmID = id.toInt()
+            }
             alarmsList.add(alarmsInfo)
             (view?.my_list?.adapter as? AlarmRecyclerAdapter)?.notifyItemInserted(alarmsList.lastIndex)
         }
