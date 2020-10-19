@@ -5,12 +5,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.example.randomalarmclock.ListFragment
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import java.util.*
 
-class broadcastController  : AppCompatActivity() {
+class BroadcastControl : AppCompatActivity() {
 
     private val fragmentList = ListFragment()
 
@@ -66,47 +65,52 @@ class broadcastController  : AppCompatActivity() {
 
     }
 
-    fun setBroadcastIntent(alarm: AlarmsInfo, wakeUpTime: Long, enum: DaysEnum?
+    private fun setBroadcastIntent(
+        alarm: AlarmsInfo,
+        wakeUpTime: Long,
+        enum: DaysEnum?,
+        context: Context?
     ) {
         var id = alarm.alarmID
         if (enum != null) {
             id = (id.toString() + enum.intValue.toString()).toInt()
         }
-        val alarmReceiverIntent = Intent(this, AlarmReceiver::class.java)
+        val alarmReceiverIntent = Intent(context, AlarmReceiver::class.java)
         val pi = PendingIntent.getBroadcast(
-            this,
+            context,
             id,
             alarmReceiverIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val am: AlarmManager? =
+            context?.let { (it.getSystemService(Context.ALARM_SERVICE) as AlarmManager) }
 
         if (alarm.onOffAlarm) {
             repeatAlarm(am, alarm, wakeUpTime, pi)
             onUpdateAlarm(alarm)
         } else {
-            am.cancel(pi)
+            am?.cancel(pi)
             onUpdateAlarm(alarm)
         }
     }
-    fun broadcastIntent(alarm: AlarmsInfo) {
+
+    fun broadcastIntent(alarm: AlarmsInfo, context: Context?) {
         val daysList = getDaysValues(alarm)
         if (daysList.isNullOrEmpty()) {
             var wakeUpTime = getWakeUpTime(null, alarm)
             if (wakeUpTime <= System.currentTimeMillis()) {
                 wakeUpTime += 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
             }
-            setBroadcastIntent(alarm, wakeUpTime, null)
+            setBroadcastIntent(alarm, wakeUpTime, null, context)
         } else {
             for (day: DaysEnum in daysList) {
                 val wakeUpTime = getWakeUpTime(day, alarm)
-                setBroadcastIntent(alarm, wakeUpTime, day)
+                setBroadcastIntent(alarm, wakeUpTime, day, context)
             }
         }
     }
 
-   private fun onUpdateAlarm (alarmsInfo: AlarmsInfo) :Unit{
-       fragmentList.updateAlarm(alarmsInfo)
-   }
-
+    private fun onUpdateAlarm(alarmsInfo: AlarmsInfo) {
+        fragmentList.updateAlarm(alarmsInfo)
+    }
 }

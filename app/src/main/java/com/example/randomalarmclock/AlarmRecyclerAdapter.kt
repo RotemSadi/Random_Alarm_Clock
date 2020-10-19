@@ -1,28 +1,21 @@
 package com.example.randomalarmclock
 
-import android.app.AlarmManager
-import android.app.AlarmManager.INTERVAL_DAY
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.randomalarmclock.alarmGoOff.AlarmReceiver
-import com.example.randomalarmclock.alarmGoOff.DaysEnum
-import com.example.randomalarmclock.alarmGoOff.broadcastController
+import com.example.randomalarmclock.alarmGoOff.BroadcastControl
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_alarm_card.view.*
-import java.util.*
 
 class AlarmRecyclerAdapter(
     var context: Context?, private val alarms: List<AlarmsInfo>,
     private val onDeleteAlarm: (alarmsInfo: AlarmsInfo) -> Unit,
     private val onUpdateAlarm: (alarmsInfo: AlarmsInfo) -> Unit
 ) : RecyclerView.Adapter<AlarmRecyclerAdapter.ViewHolder>() {
-    private val bc = broadcastController()
+    private val broadcastControl = BroadcastControl()
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
@@ -58,7 +51,7 @@ class AlarmRecyclerAdapter(
             on_off.setOnClickListener {
                 alarm.onOffAlarm = !alarm.onOffAlarm
                 on_off.setTextColor(alarmStateColor(alarm.onOffAlarm))
-                bc.broadcastIntent(alarm)
+                broadcastControl.broadcastIntent(alarm, context)
             }
             sun_btn.setTextColor(alarmStateColor(alarm.sunday))
             sun_btn.setOnClickListener {
@@ -164,99 +157,6 @@ class AlarmRecyclerAdapter(
         alarm.saturday = false
         view.sat_btn.setTextColor(alarmStateColor(alarm.saturday))
     }
-
-//    private fun broadcastIntent(alarm: AlarmsInfo) {
-//        val daysList = getDaysValues(alarm)
-//        if (daysList.isNullOrEmpty()) {
-//            var wakeUpTime = getWakeUpTime(null, alarm)
-//            if (wakeUpTime <= System.currentTimeMillis()) {
-//                wakeUpTime += 1 * 24 * 60 * 60 * 1000 // Add 1 day in milliseconds.
-//            }
-//            bc.setBroadcastIntent(alarm, wakeUpTime, null)
-//        } else {
-//            for (day: DaysEnum in daysList) {
-//                val wakeUpTime = getWakeUpTime(day, alarm)
-//                bc.setBroadcastIntent(alarm, wakeUpTime, day)
-//            }
-//        }
-//    }
-//
-//    private fun setBroadcastIntent(alarm: AlarmsInfo, wakeUpTime: Long, enum: DaysEnum?) {
-//        var id = alarm.alarmID
-//        if (enum != null) {
-//            id = (id.toString() + enum.intValue.toString()).toInt()
-//        }
-//        val alarmReceiverIntent = Intent(context, AlarmReceiver::class.java)
-//        val pi = PendingIntent.getBroadcast(
-//            context,
-//            id,
-//            alarmReceiverIntent,
-//            PendingIntent.FLAG_UPDATE_CURRENT
-//        )
-//        val am: AlarmManager? =
-//            context?.let { (it.getSystemService(Context.ALARM_SERVICE) as AlarmManager) }
-//
-//        if (alarm.onOffAlarm) {
-//            repeatAlarm(am, alarm, wakeUpTime, pi)
-//            onUpdateAlarm(alarm)
-//        } else {
-//            am?.cancel(pi)
-//            onUpdateAlarm(alarm)
-//        }
-//    }
-//
-//    private fun repeatAlarm(am: AlarmManager?, alarm: AlarmsInfo, wakeUpTime: Long, pi: PendingIntent) {
-//        if (alarm.daily) {
-//            am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, INTERVAL_DAY, pi)
-//        } else if (alarm.sunday || alarm.monday || alarm.tuesday || alarm.wednesday || alarm.thursday || alarm.friday || alarm.saturday) {
-//            am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, INTERVAL_DAY * 7, pi)
-//        } else {
-//            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
-//        }
-//
-//    }
-//
-//    private fun getWakeUpTime(day: DaysEnum?, alarm: AlarmsInfo): Long {
-//        val time =
-//            Calendar.getInstance()
-//
-//        if (day != null) {
-//            time.set(Calendar.DAY_OF_WEEK, day.intValue)
-//        }
-//        time.apply {
-//            set(Calendar.HOUR_OF_DAY, alarm.alarmHour)
-//            set(Calendar.MINUTE, alarm.alarmMinute)
-//            set(Calendar.SECOND, 0)
-//        }
-//        return time.timeInMillis
-//    }
-//
-//    private fun getDaysValues(alarm: AlarmsInfo): List<DaysEnum> {
-//        val daysList = ArrayList<DaysEnum>()
-//        if (alarm.sunday) {
-//            daysList.add(DaysEnum.Sunday)
-//        }
-//        if (alarm.monday) {
-//            daysList.add(DaysEnum.Monday)
-//        }
-//        if (alarm.tuesday) {
-//            daysList.add(DaysEnum.Tuesday)
-//        }
-//        if (alarm.wednesday) {
-//            daysList.add(DaysEnum.Wednesday)
-//        }
-//        if (alarm.thursday) {
-//            daysList.add(DaysEnum.Thursday)
-//        }
-//        if (alarm.friday) {
-//            daysList.add(DaysEnum.Friday)
-//        }
-//        if (alarm.saturday) {
-//            daysList.add(DaysEnum.Saturday)
-//        }
-//        return daysList
-//    }
-
 }
 
 
