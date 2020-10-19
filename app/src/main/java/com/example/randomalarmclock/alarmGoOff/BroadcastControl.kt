@@ -4,14 +4,10 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import com.example.randomalarmclock.ListFragment
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import java.util.*
 
-class BroadcastControl : AppCompatActivity() {
-
-    private val fragmentList = ListFragment()
+class BroadcastControl(private val onPendingIntentSent: (alarm: AlarmsInfo) -> Unit) {
 
     private fun getDaysValues(alarm: AlarmsInfo): List<DaysEnum> {
         val daysList = ArrayList<DaysEnum>()
@@ -40,8 +36,7 @@ class BroadcastControl : AppCompatActivity() {
     }
 
     private fun getWakeUpTime(day: DaysEnum?, alarm: AlarmsInfo): Long {
-        val time =
-            Calendar.getInstance()
+        val time = Calendar.getInstance()
 
         if (day != null) {
             time.set(Calendar.DAY_OF_WEEK, day.intValue)
@@ -54,15 +49,21 @@ class BroadcastControl : AppCompatActivity() {
         return time.timeInMillis
     }
 
-    private fun repeatAlarm(am: AlarmManager?, alarm: AlarmsInfo, wakeUpTime: Long, pi: PendingIntent) {
+    private fun repeatAlarm(
+        am: AlarmManager?,
+        alarm: AlarmsInfo,
+        wakeUpTime: Long,
+        pi: PendingIntent
+    ) {
         if (alarm.daily) {
+            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
             am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, AlarmManager.INTERVAL_DAY, pi)
         } else if (alarm.sunday || alarm.monday || alarm.tuesday || alarm.wednesday || alarm.thursday || alarm.friday || alarm.saturday) {
+            am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
             am?.setRepeating(AlarmManager.RTC_WAKEUP, wakeUpTime, AlarmManager.INTERVAL_DAY * 7, pi)
         } else {
             am?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pi)
         }
-
     }
 
     private fun setBroadcastIntent(
@@ -87,11 +88,10 @@ class BroadcastControl : AppCompatActivity() {
 
         if (alarm.onOffAlarm) {
             repeatAlarm(am, alarm, wakeUpTime, pi)
-            onUpdateAlarm(alarm)
         } else {
             am?.cancel(pi)
-            onUpdateAlarm(alarm)
         }
+        onPendingIntentSent(alarm)
     }
 
     fun broadcastIntent(alarm: AlarmsInfo, context: Context?) {
@@ -108,9 +108,5 @@ class BroadcastControl : AppCompatActivity() {
                 setBroadcastIntent(alarm, wakeUpTime, day, context)
             }
         }
-    }
-
-    private fun onUpdateAlarm(alarmsInfo: AlarmsInfo) {
-        fragmentList.updateAlarm(alarmsInfo)
     }
 }

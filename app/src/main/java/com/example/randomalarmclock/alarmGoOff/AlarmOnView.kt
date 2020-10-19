@@ -53,15 +53,12 @@ class AlarmOnView : AppCompatActivity() {
     }
 
     private fun snoozeText() {
-        Toast.makeText(
-            applicationContext,
-            "You have 5 more minutes to sleep",
-            Toast.LENGTH_LONG
-        ).show()
+        Toast.makeText(applicationContext, "You have 5 more minutes to sleep", Toast.LENGTH_LONG)
+            .show()
     }
 
     private fun snooze(mp: MediaPlayer) {
-        val delayTimeMilli = System.currentTimeMillis() + 300000//current time + 5 minutes 300000
+        val delayTimeMilli = System.currentTimeMillis() + 300000 //current time + 5 minutes 300000
         val alarmReceiverIntent = Intent(this, AlarmReceiver::class.java)
         // pending intent
         val pi = PendingIntent.getBroadcast(this, 111, alarmReceiverIntent, 0)
