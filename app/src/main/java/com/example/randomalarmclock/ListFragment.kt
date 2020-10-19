@@ -70,7 +70,7 @@ class ListFragment : Fragment() {
         }
     }
 
-    private val updateAlarm: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
+    val updateAlarm: (alarmInfo: AlarmsInfo) -> Unit = { alarmInfo ->
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) { alarmsDao?.updateAlarm(alarmInfo) }
         }
