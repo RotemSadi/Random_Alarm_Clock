@@ -16,6 +16,6 @@ object AnimalList {
         add(AnimalInfo(8, R.drawable.magpie, "Magpie", R.raw.magpie))
         add(AnimalInfo(9, R.drawable.peacock, "Peacock", R.raw.peacock))
         add(AnimalInfo(10, R.drawable.sheep, "Sheep", R.raw.sheep))
-        add(AnimalInfo(11, R.drawable.rooster, "Rooster", R.raw.rooster))
+        add(AnimalInfo(11, R.mipmap.rooster_2_layer, "Rooster", R.raw.rooster))
     }
 }

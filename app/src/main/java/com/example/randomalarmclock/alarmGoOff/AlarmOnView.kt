@@ -23,12 +23,12 @@ class AlarmOnView : AppCompatActivity() {
         setContentView(R.layout.activity_alarm_on_view)
         // Set random animal
         randomAnimal = Random().nextInt(AnimalList.animalList.size)
-        val a = AnimalList.animalList[randomAnimal]
-        image_animal.setImageResource(a.image)
-        name_title.text = a.name
+        val animal = AnimalList.animalList[randomAnimal]
+        image_animal.setImageResource(animal.image)
+        name_title.text = animal.name
 
         //Sounding off the alarm
-        val alarmSound = MediaPlayer.create(applicationContext, a.sound)
+        val alarmSound = MediaPlayer.create(applicationContext, animal.sound)
         mediaPlayerStart(alarmSound)
 
         stop_btn.setOnClickListener {
