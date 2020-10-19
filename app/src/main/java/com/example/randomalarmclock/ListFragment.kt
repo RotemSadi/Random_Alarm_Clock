@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.randomalarmclock.alarmGoOff.BroadcastControl
 import com.example.randomalarmclock.alarmsDatabase.AlarmsDao
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
 import kotlinx.android.synthetic.main.activity_list_fragment.view.*
@@ -19,6 +20,7 @@ class ListFragment : Fragment() {
     private val alarmsDao: AlarmsDao?
         get() = AlarmAppDB.getDatabase(context)?.alarmsDao()
     private var alarmsList: ArrayList<AlarmsInfo> = ArrayList()
+
 
     companion object {
         fun newInstance() = ListFragment()
@@ -36,10 +38,14 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.my_list.run {
             layoutManager = LinearLayoutManager(context)
-            adapter =
-                AlarmRecyclerAdapter(context, alarmsList, onDeleteAlarm, updateAlarm)
+            adapter = AlarmRecyclerAdapter(
+                context,
+                alarmsList,
+                onDeleteAlarm,
+                updateAlarm,
+                onClickAlarmOn
+            )
         }
-
 
         lifecycleScope.launch(Dispatchers.Main) {
             alarmsList.clear()
@@ -57,7 +63,9 @@ class ListFragment : Fragment() {
                 alarmsInfo.alarmID = id.toInt()
             }
             alarmsList.add(alarmsInfo)
-            (view?.my_list?.adapter as? AlarmRecyclerAdapter)?.notifyItemInserted(alarmsList.lastIndex)
+
+            (view?.my_list?.adapter as? AlarmRecyclerAdapter)?.notifyDataSetChanged()
+
         }
     }
 
@@ -74,5 +82,11 @@ class ListFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) { alarmsDao?.updateAlarm(alarmInfo) }
         }
+    }
+
+    private val broadcastControl = BroadcastControl(updateAlarm)
+
+    private val onClickAlarmOn: (alarm: AlarmsInfo) -> Unit = { alarm ->
+        broadcastControl.broadcastIntent(alarm, context)
     }
 }
