@@ -19,12 +19,20 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         callListFrag()
+
         fabAdd.setOnClickListener {
             val cal = Calendar.getInstance()
             val hour = cal.get(Calendar.HOUR_OF_DAY)
             val minute = cal.get(Calendar.MINUTE)
             TimePickerDialog(this, this, hour, minute, true).show()
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute)
+        fragmentList.addAlarm(alarm)
+        callListFrag()
     }
 
     private fun fragmentChange(newFragment: Fragment) {
@@ -37,12 +45,5 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private fun callListFrag() {
         val fragmentList = ListFragment.newInstance()
         fragmentChange(fragmentList)
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        val alarm = AlarmsInfo(alarmHour = hourOfDay, alarmMinute = minute)
-        fragmentList.addAlarm(alarm)
-        callListFrag()
     }
 }

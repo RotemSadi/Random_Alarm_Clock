@@ -6,15 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.randomalarmclock.alarmsDatabase.AlarmsDao
 import com.example.randomalarmclock.alarmsDatabase.AlarmsInfo
-import com.example.randomalarmclock.animalsDatabase.AnimalDao
-import com.example.randomalarmclock.animalsDatabase.AnimalInfo
 
 
-@Database(entities = [AlarmsInfo::class, AnimalInfo::class], version = 1)
+@Database(entities = [AlarmsInfo::class], version = 1)
 abstract class AlarmAppDB : RoomDatabase() {
 
     abstract fun alarmsDao(): AlarmsDao
-    abstract fun animalsListDao(): AnimalDao
 
     companion object {
 
